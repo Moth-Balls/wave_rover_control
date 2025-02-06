@@ -15,6 +15,5 @@ public:
 private:
     void imu_callback(const sensor_msgs::msg::Imu::SharedPtr msg);
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr pub;
-
-  
-}
+    UART uart;
+};

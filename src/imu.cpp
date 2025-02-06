@@ -8,27 +8,26 @@ using json = nlohmann::json;
 std::array<double, 4> euler_to_quaternion(double roll, double pitch, double yaw)
 {
     std::array<double, 4> q;
-    q[0] = qx = sin(roll / 2) * cos(pitch / 2) * cos(yaw / 2) - cos(roll / 2) * sin(pitch / 2) * sin(yaw / 2);
-    q[1] = qy = cos(roll / 2) * sin(pitch / 2) * cos(yaw / 2) + sin(roll / 2) * cos(pitch / 2) * sin(yaw / 2);
-    q[2] = qz = cos(roll / 2) * cos(pitch / 2) * sin(yaw / 2) - sin(roll / 2) * sin(pitch / 2) * cos(yaw / 2);
-    q[3] = qw = cos(roll / 2) * cos(pitch / 2) * cos(yaw / 2) + sin(roll / 2) * sin(pitch / 2) * sin(yaw / 2);
+    q[0] = sin(roll / 2) * cos(pitch / 2) * cos(yaw / 2) - cos(roll / 2) * sin(pitch / 2) * sin(yaw / 2);
+    q[1] = cos(roll / 2) * sin(pitch / 2) * cos(yaw / 2) + sin(roll / 2) * cos(pitch / 2) * sin(yaw / 2);
+    q[2] = cos(roll / 2) * cos(pitch / 2) * sin(yaw / 2) - sin(roll / 2) * sin(pitch / 2) * cos(yaw / 2);
+    q[3] = cos(roll / 2) * cos(pitch / 2) * cos(yaw / 2) + sin(roll / 2) * sin(pitch / 2) * sin(yaw / 2);
     return q;
 }
 
-IMU::IMU() : Node("imu")
+IMU::IMU() : Node("imu"), uart() 
 {
     pub = this->create_publisher<sensor_msgs::msg::Imu>("/imu/data", 10);
 
     RCLCPP_INFO(this->get_logger(), "Starting /imu/data Publisher");
-
 }
 
-void IMU::imu_callback(const sensor_msgs::msg::Imu::SharedPtr msg)
+void IMU::imu_callback(const sensor_msgs::msg::Imu::SharedPtr /*msg*/)
 {
     json imu_request;
-    imu_json["T"] = 126;
+    imu_request["T"] = 126;
 
-    std::string imu_request_json = imu_json.dump() + "\n";
+    std::string imu_request_json = imu_request.dump() + "\n";
 
     uart.send_data(imu_request_json);
 
@@ -37,7 +36,7 @@ void IMU::imu_callback(const sensor_msgs::msg::Imu::SharedPtr msg)
 
     std::string imu_response = uart.read_data();
 
-    json imu_json = json::parse(imu_response);
+    json imu_data = json::parse(imu_response);
 
     double roll = imu_data["r"];
     double pitch = imu_data["p"];
