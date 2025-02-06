@@ -24,14 +24,27 @@ sudo apt install nlohmann-json3-dev libserial-dev
 ```
 
 ## Installation
-Instructions on how to install and set up the project.
+Instructions on how to install and setup the package
 
+Source your Ros2 Distro
 ```sh
 source /opt/ros/<-ros-distro->/setup.bash
+```
+
+Clone repository
+```sh
 cd ~/ros2_ws/src
 git clone https://github.com/Moth-Balls/Wave-Rover-Control.git
+```
+
+Build Ros2 packages
+```sh
 cd ../
 colcon build --symlink-install
+```
+
+Source install script
+```sh
 source install/setup.bash
 ```
 

@@ -12,7 +12,7 @@ std::string twist_to_json(const geometry_msgs::msg::Twist::SharedPtr msg)
     return j.dump() + "\n";
 }
 
-ControllerNode::ControllerNode() : Node("controller_node"), uart()
+ControllerNode::ControllerNode() : Node("controller_node"), uart(SerialDevice::getInstance())
 {
     sub = this->create_subscription<geometry_msgs::msg::Twist>(
         "cmd_vel", 10, std::bind(&ControllerNode::twist_callback, this, std::placeholders::_1));

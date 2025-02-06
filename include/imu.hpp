@@ -13,7 +13,9 @@ public:
     IMU();
       
 private:
-    void imu_callback(const sensor_msgs::msg::Imu::SharedPtr msg);
+    void imu_callback();
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr pub;
-    UART uart;
+    rclcpp::TimerBase::SharedPtr timer_;
+    SerialDevice& uart;
+    std::string buffer;
 };
