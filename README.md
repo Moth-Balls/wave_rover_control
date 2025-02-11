@@ -11,7 +11,7 @@ Built using Ros2 Jazzy
 Below are the key goals for this project. Completed items are checked off as progress is made.
 
 - ✅ Goal 1: Movement control using cmd_vel/Twist messages
-- ❌ Goal 2: Continuous IMU data collection / quaternion conversion
+- ✅  Goal 2: Continuous IMU data collection / quaternion conversion
 - ❌ Goal 3: Emergency stop function
 
 ## Dependencies
