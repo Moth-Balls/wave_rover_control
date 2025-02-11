@@ -50,6 +50,8 @@
         "variant": "cpp",
         "vector": "cpp",
         "algorithm": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "charconv": "cpp",
+        "forward_list": "cpp"
     }
 }

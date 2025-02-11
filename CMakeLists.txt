@@ -12,6 +12,7 @@ find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
 
 # Include the libserial headers
 include_directories(/usr/include)
@@ -19,16 +20,20 @@ include_directories(/usr/include)
 # Include the project headers
 include_directories(include)
 
-# Add the executable
-add_executable(controller_node src/controller.cpp src/uart.cpp)
-add_executable(imu_pub src/imu.cpp src/uart.cpp)
+# Add the executables 
+add_executable(controller src/controller.cpp)
+add_executable(platform_feedback src/platform_feedback.cpp)
+add_executable(serial_gateway src/uart.cpp)
 
 # Link the necessary libraries
-ament_target_dependencies(controller_node rclcpp std_msgs geometry_msgs nlohmann_json)
-target_link_libraries(controller_node serial nlohmann_json::nlohmann_json)
+ament_target_dependencies(controller rclcpp std_msgs geometry_msgs nlohmann_json)
+target_link_libraries(controller serial nlohmann_json::nlohmann_json)
 
-ament_target_dependencies(imu_pub rclcpp std_msgs sensor_msgs nlohmann_json)
-target_link_libraries(imu_pub serial nlohmann_json::nlohmann_json)
+ament_target_dependencies(platform_feedback rclcpp std_msgs sensor_msgs nav_msgs nlohmann_json)
+target_link_libraries(platform_feedback serial nlohmann_json::nlohmann_json)
+
+ament_target_dependencies(serial_gateway rclcpp std_msgs nlohmann_json)
+target_link_libraries(serial_gateway serial nlohmann_json::nlohmann_json)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -36,8 +41,14 @@ if(BUILD_TESTING)
 endif()
 
 install(TARGETS
-  controller_node
-  imu_pub
+  controller
+  platform_feedback
+  serial_gateway
   DESTINATION lib/${PROJECT_NAME})
+
+# Install the launch file
+install(DIRECTORY launch/
+  DESTINATION share/${PROJECT_NAME}/launch
+)
 
 ament_package()

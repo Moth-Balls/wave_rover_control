@@ -5,10 +5,13 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include <memory>
-#include <stdint.h>
+#include <cstdint>
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/string.hpp>
+#include <csignal>
 
 #define SERIAL_PORT "/dev/ttyS0"
 #define BAUD_RATE LibSerial::BaudRate::BAUD_115200
@@ -22,12 +25,7 @@ using namespace nlohmann;
 class SerialDevice
 {
 public:
-    static SerialDevice& getInstance()
-    {
-        static SerialDevice instance;
-        return instance;
-    }
-
+    static SerialDevice& getInstance();
     void send_data(const std::string &data);
     std::string read_data();
 
@@ -37,4 +35,24 @@ private:
 
     SerialDevice(const SerialDevice&) = delete;
     SerialDevice& operator=(const SerialDevice&) = delete;
+};
+
+class SerialGateway : public rclcpp::Node
+{
+public:
+    SerialGateway();
+    ~SerialGateway();
+    static void signal_handler(int signal);
+    void stop();
+
+private:
+    void tx_callback(const std_msgs::msg::String::SharedPtr msg);
+    void read_loop();
+
+    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr tx_sub_;
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr rx_pub_;
+
+    SerialDevice& uart_;
+    std::thread read_thread_;
+    std::atomic<bool> running_;
 };
