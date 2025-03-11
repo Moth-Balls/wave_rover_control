@@ -17,6 +17,7 @@
   <depend>sensor_msgs</depend>
   <depend>launch</depend>
   <depend>launch_ros</depend>
+  <depend>tf2_ros</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

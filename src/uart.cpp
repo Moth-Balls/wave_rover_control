@@ -30,10 +30,9 @@ std::string SerialDevice::read_data()
         if (!response.empty() && response.back() == '\r') {
             response.pop_back();
         }
-        RCLCPP_INFO(rclcpp::get_logger("SerialDevice"), "Raw response: %s", response.c_str());
         try {
             json imu_data = json::parse(response);
-            if (imu_data.contains("T") && imu_data["T"] == 1001) {
+            if (imu_data.contains("T") && (imu_data["T"] == 1001 || imu_data["T"] == 1002)) {
                 std::cout << response << std::endl;
                 return response;
             }
@@ -81,7 +80,6 @@ void SerialGateway::read_loop()
     while (running_) {
         std::string data = uart_.read_data();
         if (!data.empty()) {
-            RCLCPP_INFO(this->get_logger(), "Read data from serial: %s", data.c_str());
             std_msgs::msg::String rx_msg;
             rx_msg.data = data;
             rx_pub_->publish(rx_msg);
@@ -106,7 +104,7 @@ int main(int argc, char *argv[])
     rclcpp::init(argc, argv);
     auto node = std::make_shared<SerialGateway>();
     rclcpp::spin(node);
-    node->stop();  // Ensure the read loop stops
+    node->stop(); 
     rclcpp::shutdown();
     return 0;
 }

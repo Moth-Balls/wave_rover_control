@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 project(wave_rover_control)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
+  add_compile_options(-Wall -Wextra -Wpedantic -O2)
 endif()
 
 # find dependencies
@@ -13,6 +13,10 @@ find_package(geometry_msgs REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+find_package(filters REQUIRED)
 
 # Include the libserial headers
 include_directories(/usr/include)
@@ -29,11 +33,12 @@ add_executable(serial_gateway src/uart.cpp)
 ament_target_dependencies(controller rclcpp std_msgs geometry_msgs nlohmann_json)
 target_link_libraries(controller serial nlohmann_json::nlohmann_json)
 
-ament_target_dependencies(platform_feedback rclcpp std_msgs sensor_msgs nav_msgs nlohmann_json)
+ament_target_dependencies(platform_feedback rclcpp std_msgs sensor_msgs nav_msgs nlohmann_json tf2 tf2_ros tf2_geometry_msgs geometry_msgs filters)
 target_link_libraries(platform_feedback serial nlohmann_json::nlohmann_json)
 
 ament_target_dependencies(serial_gateway rclcpp std_msgs nlohmann_json)
 target_link_libraries(serial_gateway serial nlohmann_json::nlohmann_json)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

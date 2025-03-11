@@ -8,7 +8,7 @@ std::string twist_to_json(const geometry_msgs::msg::Twist::SharedPtr msg)
 {
     json j;
     j["T"] = 13;
-    j["X"] = msg->linear.x;
+    j["X"] = -(msg->linear.x);
     j["Z"] = msg->angular.z;
     return j.dump() + "\n";
 }
